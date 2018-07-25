@@ -33,10 +33,13 @@ from .find import find_copyright, is_copyright_exist
 from shutil import copyfile
 import os
 
-def add_copyright(target_file_name, copyright_lines, with_backup, with_surround):
+def add_copyright(target_file_name, copyright_lines, with_backup, with_surround, force):
     if is_copyright_exist(target_file_name):
-        ConsoleLogger.warn("A copyright already exists in " + target_file_name)
-        return False
+        if not force:
+            ConsoleLogger.warn("A copyright maybe already exists in " + target_file_name)
+            return False
+        else:
+            ConsoleLogger.warn("A copyright maybe already exists in " + target_file_name + " - adding as --force option is specified.")
     with open(target_file_name, 'r') as target_file:
         target_content = target_file.read()
     if with_backup:

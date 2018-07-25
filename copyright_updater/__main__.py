@@ -42,9 +42,9 @@ import pkg_resources
 
 JOBS_NUMBER = 5
 
-def job_add(copyright_lines, chunk, with_backup=False, with_surround=False):
+def job_add(copyright_lines, chunk, with_backup=False, with_surround=False, force=False):
     for target_file_name in chunk:
-        add_copyright(target_file_name, copyright_lines, with_backup, with_surround)
+        add_copyright(target_file_name, copyright_lines, with_backup, with_surround, force)
 
 def job_replace(current_copyright_content, new_copyright_content, chunk, with_backup=False):
     for target_file_name in chunk:
@@ -91,6 +91,7 @@ def main():
     parser.add_argument('-e', '--erase', action='store_true')
     parser.add_argument('-b', '--backup', action='store_true')
     parser.add_argument('-s', '--surround', action='store_true')
+    parser.add_argument('--force', action='store_true')
     args = parser.parse_args()
 
     if not args.file and not args.dir:
@@ -123,7 +124,7 @@ def main():
         copyright_lines = copyright_content.split('\n')
 
         if args.file:
-            job_add(copyright_lines, [args.file[0]], args.backup, args.surround)
+            job_add(copyright_lines, [args.file[0]], args.backup, args.surround, args.force)
         else:
             target_files = list_target_files(args.dir[0])
             target_files = [item for item in target_files if os.path.splitext(item)[1] in ('.c', '.h', '.py')]
@@ -132,7 +133,7 @@ def main():
 
             with futures.ProcessPoolExecutor(JOBS_NUMBER) as executor:
                 list(f.result() for f in futures.as_completed(executor.submit(job_add, copyright_lines,
-                    chunk, args.backup, args.surround) for chunk in chunks))
+                    chunk, args.backup, args.surround, args.force) for chunk in chunks))
     elif args.replace:
         with open(args.replace[0], 'r') as current_copyright_file:
             current_copyright_content = current_copyright_file.read()
