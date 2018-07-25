@@ -1,4 +1,4 @@
-# Install
+# Installation
 
 ```bash
 git clone https://github.com/swasun/copyright-updater
