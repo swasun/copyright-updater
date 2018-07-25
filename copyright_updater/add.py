@@ -24,33 +24,28 @@
  #   SOFTWARE.                                                                       #
  #####################################################################################
 
-import sys
+from .console_logger import ConsoleLogger
+from .copyright import Copyright
+from .comment_parameters import CommentParameters
+from .comment import comment_copyright
+from .find import find_copyright, is_copyright_exist
 
-class ColorPrint:
-    """ Colored printing functions for strings that use universal ANSI escape sequences.
+from shutil import copyfile
+import os
 
-    fail: bold red, pass: bold green, warn: bold yellow, 
-    info: bold blue, bold: bold white
-
-    :source: https://stackoverflow.com/a/47622205
-    """
-
-    @staticmethod
-    def print_fail(message, end = '\n'):
-        sys.stderr.write('\x1b[1;31m' + message.strip() + '\x1b[0m' + end)
-
-    @staticmethod
-    def print_pass(message, end = '\n'):
-        sys.stdout.write('\x1b[1;32m' + message.strip() + '\x1b[0m' + end)
-
-    @staticmethod
-    def print_warn(message, end = '\n'):
-        sys.stderr.write('\x1b[1;33m' + message.strip() + '\x1b[0m' + end)
-
-    @staticmethod
-    def print_info(message, end = '\n'):
-        sys.stdout.write('\x1b[1;34m' + message.strip() + '\x1b[0m' + end)
-
-    @staticmethod
-    def print_bold(message, end = '\n'):
-        sys.stdout.write('\x1b[1;37m' + message.strip() + '\x1b[0m' + end)
+def add_copyright(target_file_name, copyright_lines, with_backup):
+    if is_copyright_exist(target_file_name):
+        ConsoleLogger.warn("A copyright already exists in " + target_file_name)
+        return False
+    with open(target_file_name, 'r') as target_file:
+        target_content = target_file.read()
+    if with_backup:
+        copyfile(target_file_name, target_file_name + '.backup')
+    os.remove(target_file_name)
+    copyright = Copyright(copyright_lines, CommentParameters.create_from_file_extension(os.path.splitext(target_file_name)[1]))
+    commented_copyright = comment_copyright(copyright)
+    copyright_content = ''.join(commented_copyright.lines)
+    with open(target_file_name, 'w') as new_file:
+        new_file.write(copyright_content + '\n' + target_content)
+    ConsoleLogger.success('Copyright added in ' + target_file_name)
+    return True
