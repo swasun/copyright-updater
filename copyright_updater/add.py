@@ -33,7 +33,7 @@ from .find import find_copyright, is_copyright_exist
 from shutil import copyfile
 import os
 
-def add_copyright(target_file_name, copyright_lines, with_backup):
+def add_copyright(target_file_name, copyright_lines, with_backup, with_surround):
     if is_copyright_exist(target_file_name):
         ConsoleLogger.warn("A copyright already exists in " + target_file_name)
         return False
@@ -42,7 +42,7 @@ def add_copyright(target_file_name, copyright_lines, with_backup):
     if with_backup:
         copyfile(target_file_name, target_file_name + '.backup')
     os.remove(target_file_name)
-    copyright = Copyright(copyright_lines, CommentParameters.create_from_file_extension(os.path.splitext(target_file_name)[1]))
+    copyright = Copyright(copyright_lines, CommentParameters.create_from_file_extension(os.path.splitext(target_file_name)[1], with_surround))
     commented_copyright = comment_copyright(copyright)
     copyright_content = ''.join(commented_copyright.lines)
     with open(target_file_name, 'w') as new_file:

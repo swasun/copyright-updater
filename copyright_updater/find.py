@@ -74,11 +74,11 @@ def find_copyright(file_lines):
         for i in range(copyright_index, -1, -1):
             line = file_lines[i]
             if line.lstrip(' ').startswith('/*'):
-                comment_type = CommentType.SUROUND_BY_STARS
+                comment_type = CommentType.SURROUND_BY_STARS
                 symbol = '*'
                 break
             elif line.lstrip(' ').startswith('###'):
-                comment_type = CommentType.SUROUND_BY_SYMBOL_NUMBERS
+                comment_type = CommentType.SURROUND_BY_SYMBOL_NUMBERS
                 symbol = '#'
                 first_commented_line_index = i
                 break
@@ -88,13 +88,13 @@ def find_copyright(file_lines):
         raise ValueError("Failed to recognized comment type")
 
     # Find the last commented line of the copyright
-    if comment_type == CommentType.SUROUND_BY_STARS:
+    if comment_type == CommentType.SURROUND_BY_STARS:
         for i in range(first_commented_line_index, file_lines_len):
             line = file_lines[i]
             if line.rstrip().endswith('*/'):
                 last_commented_line_index = i+1
                 break
-    elif comment_type == CommentType.SUROUND_BY_SYMBOL_NUMBERS:
+    elif comment_type == CommentType.SURROUND_BY_SYMBOL_NUMBERS:
         symbol_numbers_line = file_lines[first_commented_line_index].replace('\n', '')
         for i in range(first_commented_line_index+1, file_lines_len):
             if file_lines[i] in (symbol_numbers_line, symbol_numbers_line + '\n'):
@@ -125,7 +125,7 @@ def find_copyright(file_lines):
     left_strip_copyright_line = file_lines[copyright_index].lstrip(' ')
     additional_spaces_after_begin_symbol = len(left_strip_copyright_line) - len(left_strip_copyright_line[len(symbol):])
 
-    if comment_type in (CommentType.SUROUND_BY_STARS, CommentType.SUROUND_BY_SYMBOL_NUMBERS):
+    if comment_type in (CommentType.SURROUND_BY_STARS, CommentType.SURROUND_BY_SYMBOL_NUMBERS):
         additionals_spaces_before_end_symbol = list()
         for line in copyright_lines:
             additionals_spaces_before_end_symbol.append(len(line) + len(symbol) - len(line[:-len(symbol)].rstrip(' ')))

@@ -39,11 +39,11 @@ class CommentParameters(object):
         self.additional_spaces_before_end_symbol = additional_spaces_before_end_symbol
 
     @staticmethod
-    def create_from_file_extension(extension):
+    def create_from_file_extension(extension, surround=False):
         if extension == '.py':
-            return CommentParameters(CommentType.SUROUND_BY_SYMBOL_NUMBERS, '#')
+            return CommentParameters(CommentType.SURROUND_BY_SYMBOL_NUMBERS if surround else CommentType.SYMBOL_NUMBER, '#')
         elif extension in ('.c', '.h'):
-            return CommentParameters(CommentType.SUROUND_BY_STARS, '*')
+            return CommentParameters(CommentType.SURROUND_BY_STARS if surround else CommentType.SLASH, '*' if surround else '//')
         
         raise ValueError("Unsupported extension file '" + extension + "'")
 

@@ -35,7 +35,7 @@ def uncomment_copyright(copyright):
     additional_end_spaces_to_remove = None
     additional_new_line = ''
 
-    if copyright.comment_parameters.comment_type in (CommentType.SUROUND_BY_SYMBOL_NUMBERS, CommentType.SUROUND_BY_STARS):
+    if copyright.comment_parameters.comment_type in (CommentType.SURROUND_BY_SYMBOL_NUMBERS, CommentType.SURROUND_BY_STARS):
         begin_index += 1
         last_index -= 1
         additional_end_spaces_to_remove = -(copyright.comment_parameters.additional_spaces_before_end_symbol + len(copyright.comment_parameters.symbol) + 1)

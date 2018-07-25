@@ -28,7 +28,7 @@ from .utils import read_lines
 from .comment_type import CommentType
 from .copyright import Copyright
 
-def _suround_with_symbol(copyright_lines, symbol, max_length, additional_spaces_before_begin_symbol, additional_spaces_after_begin_symbol,
+def _surround_with_symbol(copyright_lines, symbol, max_length, additional_spaces_before_begin_symbol, additional_spaces_after_begin_symbol,
     additional_spaces_before_end_symbol):
 
     commented_copyright_lines = list()
@@ -73,11 +73,11 @@ def _comment_with_symbol(copyright_lines, symbol, max_length, additional_spaces_
 
     return commented_copyright_lines
 
-def suround_with_stars(copyright_lines, additional_spaces_before_begin_symbol=1, additional_spaces_after_begin_symbol=1,
+def surround_with_stars(copyright_lines, additional_spaces_before_begin_symbol=1, additional_spaces_after_begin_symbol=1,
     additional_spaces_before_end_symbol=2):
 
     max_length, _ = max([(len(x), x) for x in copyright_lines])
-    commented_copyright_lines = _suround_with_symbol(copyright_lines, '*', max_length, additional_spaces_before_begin_symbol,
+    commented_copyright_lines = _surround_with_symbol(copyright_lines, '*', max_length, additional_spaces_before_begin_symbol,
         additional_spaces_after_begin_symbol, additional_spaces_before_end_symbol)
 
     star_line = ('*' * (max_length + additional_spaces_before_begin_symbol + additional_spaces_after_begin_symbol + additional_spaces_before_end_symbol + 1))
@@ -85,11 +85,11 @@ def suround_with_stars(copyright_lines, additional_spaces_before_begin_symbol=1,
 
     return commented_copyright_lines
 
-def suround_with_number_symbols(copyright_lines, additional_spaces_before_begin_symbol=1, additional_spaces_after_begin_symbol=1,
+def surround_with_number_symbols(copyright_lines, additional_spaces_before_begin_symbol=1, additional_spaces_after_begin_symbol=1,
     additional_spaces_before_end_symbol=2):
 
     max_length, _ = max([(len(x), x) for x in copyright_lines])
-    commented_copyright_lines = _suround_with_symbol(copyright_lines, '#', max_length, additional_spaces_before_begin_symbol,
+    commented_copyright_lines = _surround_with_symbol(copyright_lines, '#', max_length, additional_spaces_before_begin_symbol,
         additional_spaces_after_begin_symbol, additional_spaces_before_end_symbol)
 
     star_line = ('#' * (max_length + additional_spaces_before_begin_symbol + additional_spaces_after_begin_symbol + additional_spaces_before_end_symbol + 1))
@@ -116,11 +116,11 @@ def comment_with_symbol_numbers(copyright_lines, additional_spaces_before_begin_
     return commented_copyright_lines
 
 def comment_copyright(copyright):
-    if copyright.comment_parameters.comment_type is CommentType.SUROUND_BY_STARS:
-        lines = suround_with_stars(copyright.lines, copyright.comment_parameters.additional_spaces_before_begin_symbol,
+    if copyright.comment_parameters.comment_type is CommentType.SURROUND_BY_STARS:
+        lines = surround_with_stars(copyright.lines, copyright.comment_parameters.additional_spaces_before_begin_symbol,
             copyright.comment_parameters.additional_spaces_after_begin_symbol, copyright.comment_parameters.additional_spaces_before_end_symbol) + ['\n']
-    elif copyright.comment_parameters.comment_type is CommentType.SUROUND_BY_SYMBOL_NUMBERS:
-        lines = suround_with_number_symbols(copyright.lines, copyright.comment_parameters.additional_spaces_before_begin_symbol,
+    elif copyright.comment_parameters.comment_type is CommentType.SURROUND_BY_SYMBOL_NUMBERS:
+        lines = surround_with_number_symbols(copyright.lines, copyright.comment_parameters.additional_spaces_before_begin_symbol,
             copyright.comment_parameters.additional_spaces_after_begin_symbol, copyright.comment_parameters.additional_spaces_before_end_symbol) + ['\n']
     elif copyright.comment_parameters.comment_type is CommentType.SLASH:
         lines = comment_with_slash(copyright.lines, copyright.comment_parameters.additional_spaces_before_begin_symbol,
@@ -136,10 +136,10 @@ def comment_copyright(copyright):
 def test_comments():
     copyright_lines = read_lines('copyrights/hardcoded')
 
-    print(''.join(suround_with_stars(copyright_lines)))
+    print(''.join(surround_with_stars(copyright_lines)))
     print()
 
-    print(''.join(suround_with_number_symbols(copyright_lines)))
+    print(''.join(surround_with_number_symbols(copyright_lines)))
     print()
 
     print(''.join(comment_with_slash(copyright_lines)))
