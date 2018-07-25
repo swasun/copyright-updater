@@ -48,6 +48,8 @@ def erase_copyright(target_file_name, with_backup):
         copyfile(target_file_name, target_file_name + '.backup')
     os.remove(target_file_name)
     with open(target_file_name, 'w') as new_file:
+        new_file.write(target_content.replace(''.join(copyright.lines) + '\n' + '\n', ''))
+        new_file.write(target_content.replace(''.join(copyright.lines) + '\n', ''))
         new_file.write(target_content.replace(''.join(copyright.lines), ''))
     ConsoleLogger.success('Copyright erased in ' + target_file_name)
     return True

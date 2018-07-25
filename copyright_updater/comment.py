@@ -81,7 +81,7 @@ def surround_with_stars(copyright_lines, additional_spaces_before_begin_symbol=1
         additional_spaces_after_begin_symbol, additional_spaces_before_end_symbol)
 
     star_line = ('*' * (max_length + additional_spaces_before_begin_symbol + additional_spaces_after_begin_symbol + additional_spaces_before_end_symbol + 1))
-    commented_copyright_lines = ['/' + star_line + '\n'] + commented_copyright_lines + [(' ' * additional_spaces_before_begin_symbol) + star_line + '/']
+    commented_copyright_lines = ['//' + star_line + '\n'] + commented_copyright_lines + [(' ' * additional_spaces_before_begin_symbol) + star_line + '//']
 
     return commented_copyright_lines
 
@@ -101,7 +101,7 @@ def comment_with_slash(copyright_lines, additional_spaces_before_begin_symbol=1,
     additional_spaces_before_end_symbol=2):
 
     max_length, _ = max([(len(x), x) for x in copyright_lines])
-    commented_copyright_lines = _comment_with_symbol(copyright_lines, '/', max_length, additional_spaces_before_begin_symbol,
+    commented_copyright_lines = _comment_with_symbol(copyright_lines, '//', max_length, additional_spaces_before_begin_symbol,
         additional_spaces_after_begin_symbol, additional_spaces_before_end_symbol)
 
     return commented_copyright_lines

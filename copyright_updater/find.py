@@ -76,6 +76,7 @@ def find_copyright(file_lines):
             if line.lstrip(' ').startswith('/*'):
                 comment_type = CommentType.SURROUND_BY_STARS
                 symbol = '*'
+                first_commented_line_index = i
                 break
             elif line.lstrip(' ').startswith('###'):
                 comment_type = CommentType.SURROUND_BY_SYMBOL_NUMBERS
@@ -93,12 +94,13 @@ def find_copyright(file_lines):
             line = file_lines[i]
             if line.rstrip().endswith('*/'):
                 last_commented_line_index = i+1
+                file_lines[i] = file_lines[i].replace('\n', '')
                 break
     elif comment_type == CommentType.SURROUND_BY_SYMBOL_NUMBERS:
         symbol_numbers_line = file_lines[first_commented_line_index].replace('\n', '')
         for i in range(first_commented_line_index+1, file_lines_len):
             if file_lines[i] in (symbol_numbers_line, symbol_numbers_line + '\n'):
-                last_commented_line_index = i+1
+                last_commented_line_index = i
                 break
     elif comment_type == CommentType.SYMBOL_NUMBER:
         for i in range(first_commented_line_index, file_lines_len):
