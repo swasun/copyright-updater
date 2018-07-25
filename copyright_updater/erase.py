@@ -24,33 +24,30 @@
  #   SOFTWARE.                                                                       #
  #####################################################################################
 
+from .console_logger import ConsoleLogger
+from .copyright import Copyright
+from .comment_parameters import CommentParameters
+from .comment import comment_copyright
+from .find import find_copyright, is_copyright_exist
 
-def simple__repr__(obj):
-    """ A mixin implementing a simple __repr__
+from shutil import copyfile
+import os
 
-    :source: Inspired from https://stackoverflow.com/a/44595303
-    """
-
-    attrs = list()
-    indent = 0
-
-    for k, v in obj.__dict__.items():
-        attr = "{}={!r}".format(k, v)
-        if ('<' in str(v)):
-            indent = 3
-        else:
-            indent = 0
-        attrs.append(_reindent(attr, indent))
-
-    return "<{klass} @{id:x}\n{attrs}>".format(
-        klass=obj.__class__.__name__,
-        id=id(obj) & 0xFFFFFF,
-        #attrs="\n".join("{}={!r}".format(k, v) for k, v in obj.__dict__.items())
-        attrs="\n".join(attrs)
-    )
-
-def _reindent(s, num_spaces):
-    leading_space = num_spaces * ' '
-    lines = [ leading_space + line.strip( )
-              for line in s.splitlines( ) ]
-    return '\n'.join(lines).replace(leading_space, '', 1)
+def erase_copyright(target_file_name, with_backup):
+    with open(target_file_name, 'r') as f:
+        file_lines = f.readlines()
+    try:
+        copyright = find_copyright(file_lines)
+    except:
+        ConsoleLogger.status('No copyright detected in ' + target_file_name + ' - skipping.')
+        return True
+    
+    with open(target_file_name, 'r') as target_file:
+        target_content = target_file.read()
+    if with_backup:
+        copyfile(target_file_name, target_file_name + '.backup')
+    os.remove(target_file_name)
+    with open(target_file_name, 'w') as new_file:
+        new_file.write(target_content.replace(''.join(copyright.lines), ''))
+    ConsoleLogger.success('Copyright erased in ' + target_file_name)
+    return True

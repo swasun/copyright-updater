@@ -32,6 +32,7 @@ from .uncomment import uncomment_copyright
 from .find import find_copyright
 from .add import add_copyright
 from .replace import replace_copyright
+from .erase import erase_copyright
 
 import sys
 import os
@@ -75,6 +76,10 @@ def job_update(category, chunk, current, new, with_backup=False):
         new_copyright = comment_copyright(uncommented_copyright)
 
         replace_copyright(target_file_name, ''.join(copyright.lines), ''.join(new_copyright.lines), with_backup)
+
+def job_erase(chunk, with_backup=False):
+    for target_file_name in chunk:
+        erase_copyright(target_file_name, with_backup)
 
 def main():
     parser = argparse.ArgumentParser()
@@ -157,6 +162,18 @@ def main():
             with futures.ProcessPoolExecutor(JOBS_NUMBER) as executor:
                 list(f.result() for f in futures.as_completed(executor.submit(job_update, args.update[0], chunk,
                     args.update[1], args.update[2], args.backup) for chunk in chunks))
+    elif args.erase:
+        if args.file:
+            job_erase([args.file[0]], args.backup)
+        else:
+            target_files = list_target_files(args.dir[0])
+            target_files = [item for item in target_files if os.path.splitext(item)[1] in ('.c', '.h', '.py')]
+
+            chunks = chunkify(target_files, JOBS_NUMBER)
+
+            with futures.ProcessPoolExecutor(JOBS_NUMBER) as executor:
+                list(f.result() for f in futures.as_completed(executor.submit(job_erase,  chunk,
+                    args.backup) for chunk in chunks))
 
 if __name__ == '__main__':
     sys.exit(main())

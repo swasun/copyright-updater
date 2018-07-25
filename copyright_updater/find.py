@@ -59,7 +59,7 @@ def find_copyright(file_lines):
 
     # Leave if the Copyright string wasn't found
     if copyright_index == -1:
-        raise RuntimeError('Failed to find copyright index')
+        raise ValueError('Failed to find copyright index')
 
     # Find the first commented line and the comment type of the copyright
     if copyright_index == 0:
@@ -71,30 +71,34 @@ def find_copyright(file_lines):
             comment_type = CommentType.SLASH
             symbol = '//'
     else:
-        first_commented_line_index = copyright_index - 1
-        if file_lines[first_commented_line_index].lstrip(' ').startswith('/*'):
-            comment_type = CommentType.SUROUND_BY_STARS
-            symbol = '*'
-        elif file_lines[first_commented_line_index].lstrip(' ').startswith('#'):
-            comment_type = CommentType.SUROUND_BY_SYMBOL_NUMBERS
-            symbol = '#'
+        for i in range(copyright_index, -1, -1):
+            line = file_lines[i]
+            if line.lstrip(' ').startswith('/*'):
+                comment_type = CommentType.SUROUND_BY_STARS
+                symbol = '*'
+                break
+            elif line.lstrip(' ').startswith('###'):
+                comment_type = CommentType.SUROUND_BY_SYMBOL_NUMBERS
+                symbol = '#'
+                first_commented_line_index = i
+                break
 
     # Leave if the copyright type wasn't recognized
     if comment_type == CommentType.UNKNOWN:
-        raise RuntimeError("Failed to recognized comment type")
+        raise ValueError("Failed to recognized comment type")
 
     # Find the last commented line of the copyright
     if comment_type == CommentType.SUROUND_BY_STARS:
         for i in range(first_commented_line_index, file_lines_len):
             line = file_lines[i]
             if line.rstrip().endswith('*/'):
-                last_commented_line_index = i + 1
+                last_commented_line_index = i+1
                 break
     elif comment_type == CommentType.SUROUND_BY_SYMBOL_NUMBERS:
-        symbol_numbers_line = file_lines[first_commented_line_index]
-        for i in range(first_commented_line_index, file_lines_len):
-            if file_lines[i] == symbol_numbers_line:
-                last_commented_line_index = i + 1
+        symbol_numbers_line = file_lines[first_commented_line_index].replace('\n', '')
+        for i in range(first_commented_line_index+1, file_lines_len):
+            if file_lines[i] in (symbol_numbers_line, symbol_numbers_line + '\n'):
+                last_commented_line_index = i+1
                 break
     elif comment_type == CommentType.SYMBOL_NUMBER:
         for i in range(first_commented_line_index, file_lines_len):
@@ -109,12 +113,12 @@ def find_copyright(file_lines):
 
     # Leave if the last commented line of the copyright wasn't found
     if last_commented_line_index == -1:
-        raise RuntimeError("Failed to find the last commented line of copyright")
+        raise ValueError("Failed to find the last commented line of copyright")
 
     # Get the number of spaces before the comment symbol
     additional_spaces_before_begin_symbol = len(file_lines[copyright_index]) - len(file_lines[copyright_index].lstrip(' '))
     if additional_spaces_before_begin_symbol < 0:
-        raise RuntimeError("Failed to fidn the additional spaces before begin symbol")
+        raise ValueError("Failed to fidn the additional spaces before begin symbol")
 
     copyright_lines = file_lines[first_commented_line_index:last_commented_line_index]
 

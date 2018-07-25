@@ -75,7 +75,7 @@ def test():
 
     update_copyright_date(uncommented_copyright, '2018', '2019')
     update_copyright_author(uncommented_copyright, 'Charly Lamothe', 'Swa')
-    update_copyright_project_name(uncommented_copyright, 'LibUnknownEchoCryptoModule', 'Wesh')
+    update_copyright_project_name(uncommented_copyright, 'LibUnknownEchoCryptoModule', 'New')
 
     print(''.join(uncommented_copyright.lines))
 
