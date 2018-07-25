@@ -1,6 +1,6 @@
-from utils import read_lines
-from comment_type import CommentType
-from copyright import Copyright
+from .utils import read_lines
+from .comment_type import CommentType
+from .copyright import Copyright
 
 def _suround_with_symbol(copyright_lines, symbol, max_length, additional_spaces_before_begin_symbol, additional_spaces_after_begin_symbol,
     additional_spaces_before_end_symbol):

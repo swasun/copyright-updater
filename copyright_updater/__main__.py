@@ -1,11 +1,12 @@
-from replace import replace_copyright
-from utils import chunkify, list_target_files, read_lines
-from console_logger import ConsoleLogger
-from update import update_copyright_date, update_copyright_author, update_copyright_project_name
-from comment import comment_copyright
-from uncomment import uncomment_copyright
-from find import find_copyright
+from .replace import replace_copyright
+from .utils import chunkify, list_target_files, read_lines
+from .console_logger import ConsoleLogger
+from .update import update_copyright_date, update_copyright_author, update_copyright_project_name
+from .comment import comment_copyright
+from .uncomment import uncomment_copyright
+from .find import find_copyright
 
+import sys
 import os
 import argparse
 from concurrent import futures
@@ -43,7 +44,7 @@ def job_update(category, chunk, current, new, with_backup=False):
 
         replace_copyright(target_file_name, ''.join(copyright.lines), ''.join(new_copyright.lines), with_backup)
 
-if __name__ == '__main__':
+def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-f', '--file', nargs=1, metavar=('PATH'))
     parser.add_argument('-d', '--dir', nargs=1, metavar=('PATH'))
@@ -101,3 +102,7 @@ if __name__ == '__main__':
             with futures.ProcessPoolExecutor(JOBS_NUMBER) as executor:
                 list(f.result() for f in futures.as_completed(executor.submit(job_update, args.update[0], chunk,
                     args.update[1], args.update[2], args.backup) for chunk in chunks))
+
+
+if __name__ == '__main__':
+    sys.exit(main())

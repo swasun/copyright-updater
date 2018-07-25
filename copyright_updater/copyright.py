@@ -1,4 +1,4 @@
-from simple__repr__ import simple__repr__
+from .simple__repr__ import simple__repr__
 
 class Copyright(object):
 

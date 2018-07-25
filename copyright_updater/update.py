@@ -1,11 +1,11 @@
+from .comment import comment_copyright
+from .uncomment import uncomment_copyright
+from .copyright import Copyright
+from .find import find_copyright
+from .utils import chunkify, list_target_files, read_lines
+
 import os
 from concurrent import futures
-
-from comment import comment_copyright
-from uncomment import uncomment_copyright
-from copyright import Copyright
-from find import find_copyright
-from utils import chunkify, list_target_files, read_lines
 
 def update_copyright_date(copyright, previous_date, new_date):
     for i in range(0, len(copyright.lines)):

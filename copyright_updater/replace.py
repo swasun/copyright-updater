@@ -1,4 +1,4 @@
-from console_logger import ConsoleLogger
+from .console_logger import ConsoleLogger
 
 from shutil import copyfile
 import os

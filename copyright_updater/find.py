@@ -1,6 +1,6 @@
-from comment_type import CommentType
-from comment_parameters import CommentParameters
-from copyright import Copyright
+from .comment_type import CommentType
+from .comment_parameters import CommentParameters
+from .copyright import Copyright
 
 def find_copyright(file_lines):
     file_lines_len = len(file_lines)

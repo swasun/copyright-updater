@@ -1,8 +1,6 @@
-
-
-from comment_type import CommentType
-from comment_parameters import CommentParameters
-from copyright import Copyright
+from .comment_type import CommentType
+from .comment_parameters import CommentParameters
+from .copyright import Copyright
 
 def uncomment_copyright(copyright):
     uncommented_lines = list()
