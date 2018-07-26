@@ -1,0 +1,3 @@
+- Add interactive mode instead of force for "maybe" already exists copyright
+- Detect multiple copyrights in same files
+- Add more extension support
