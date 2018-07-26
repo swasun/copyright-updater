@@ -125,16 +125,16 @@ def main():
         target_files = [item for item in target_files if os.path.splitext(item)[1] in ('.c', '.h', '.py', '.txt', '.cmake')]
         chunks = chunkify(target_files, JOBS_NUMBER)
     else:
+        target_files = []
         for target in args.list:
-            target_files = list()
             if os.path.isfile(target):
-                target_files.append(target)
+                target_files += [target]
             elif os.path.isdir(target):
-                target_files = target_files + list_target_files(target)
+                target_files += list_target_files(target)
             else:
                 ConsoleLogger.warn("Target '" + target + "' not found - skipping")
-            target_files = [item for item in target_files if os.path.splitext(item)[1] in ('.c', '.h', '.py', '.txt', '.cmake')]
-            chunks = chunkify(target_files, JOBS_NUMBER)
+        target_files = [item for item in target_files if os.path.splitext(item)[1] in ('.c', '.h', '.py', '.txt', '.cmake')]
+        chunks = chunkify(target_files, JOBS_NUMBER)
 
     if args.add:
         file_name = pkg_resources.resource_filename(__name__, 'templates/' + str(args.add[0]).lower() + '_copyright_preface_template')
