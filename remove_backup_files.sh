@@ -1,1 +1,1 @@
-find . -name "*.backup" -exec rm -f {} \
+find . -name "*.backup" -type f -delete
