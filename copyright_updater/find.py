@@ -100,7 +100,7 @@ def find_copyright(file_lines):
         symbol_numbers_line = file_lines[first_commented_line_index].replace('\n', '')
         for i in range(first_commented_line_index+1, file_lines_len):
             if file_lines[i] in (symbol_numbers_line, symbol_numbers_line + '\n'):
-                last_commented_line_index = i
+                last_commented_line_index = i+1
                 break
     elif comment_type == CommentType.SYMBOL_NUMBER:
         for i in range(first_commented_line_index, file_lines_len):

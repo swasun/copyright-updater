@@ -40,7 +40,7 @@ class CommentParameters(object):
 
     @staticmethod
     def create_from_file_extension(extension, surround=False):
-        if extension == '.py':
+        if extension in ('.py', '.txt', '.cmake'):
             return CommentParameters(CommentType.SURROUND_BY_SYMBOL_NUMBERS if surround else CommentType.SYMBOL_NUMBER, '#')
         elif extension in ('.c', '.h'):
             return CommentParameters(CommentType.SURROUND_BY_STARS if surround else CommentType.SLASH, '*' if surround else '//')

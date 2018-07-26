@@ -85,17 +85,18 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-f', '--file', nargs=1, metavar=('PATH'))
     parser.add_argument('-d', '--dir', nargs=1, metavar=('PATH'))
+    parser.add_argument('-l', '--list', nargs='+')
     parser.add_argument('-a', '--add', nargs=4, metavar=('[APACHE2|GPL3|MIT]', 'PROJECT', 'AUTHOR', 'DATE'))
     parser.add_argument('-r', '--replace', nargs=2, metavar=('CURRENT_PATH', 'NEW_PATH'))
     parser.add_argument('-u', '--update', nargs=3, metavar=('[AUTHOR|DATE|PROJECT]', 'CURRENT', 'NEW'))
     parser.add_argument('-e', '--erase', action='store_true')
-    parser.add_argument('-b', '--backup', action='store_true')
-    parser.add_argument('-s', '--surround', action='store_true')
+    parser.add_argument('--backup', action='store_true')
+    parser.add_argument('--surround', action='store_true')
     parser.add_argument('--force', action='store_true')
     args = parser.parse_args()
 
-    if not args.file and not args.dir:
-        parser.error('One of --file or --dir must be given')
+    if not args.file and not args.dir and not args.list:
+        parser.error('One of --file or --dir or --list must be given')
 
     mode_count = sum([1 if arg else 0 for arg in (args.add, args.replace, args.update, args.erase)])
     if mode_count == 0:
@@ -115,6 +116,26 @@ def main():
     if args.dir and not os.path.isdir(args.dir[0]):
         raise FileNotFoundError("Directory '" + args.file[0] + "' not found")
 
+    if args.file:
+        target_files = [args.file[0]]
+        if os.path.splitext(target_files[0])[1] not in ('.c', '.h', '.py', '.txt', '.cmake'):
+            raise NotImplementedError("Extension file not supportet")
+    elif args.dir:
+        target_files = list_target_files(args.dir[0])
+        target_files = [item for item in target_files if os.path.splitext(item)[1] in ('.c', '.h', '.py', '.txt', '.cmake')]
+        chunks = chunkify(target_files, JOBS_NUMBER)
+    else:
+        for target in args.list:
+            target_files = list()
+            if os.path.isfile(target):
+                target_files.append(target)
+            elif os.path.isdir(target):
+                target_files = target_files + list_target_files(target)
+            else:
+                ConsoleLogger.warn("Target '" + target + "' not found - skipping")
+            target_files = [item for item in target_files if os.path.splitext(item)[1] in ('.c', '.h', '.py', '.txt', '.cmake')]
+            chunks = chunkify(target_files, JOBS_NUMBER)
+
     if args.add:
         file_name = pkg_resources.resource_filename(__name__, 'templates/' + str(args.add[0]).lower() + '_copyright_preface_template')
         with open(file_name, 'r') as f:
@@ -124,13 +145,8 @@ def main():
         copyright_lines = copyright_content.split('\n')
 
         if args.file:
-            job_add(copyright_lines, [args.file[0]], args.backup, args.surround, args.force)
+            job_add(copyright_lines, target_files, args.backup, args.surround, args.force)
         else:
-            target_files = list_target_files(args.dir[0])
-            target_files = [item for item in target_files if os.path.splitext(item)[1] in ('.c', '.h', '.py')]
-
-            chunks = chunkify(target_files, JOBS_NUMBER)
-
             with futures.ProcessPoolExecutor(JOBS_NUMBER) as executor:
                 list(f.result() for f in futures.as_completed(executor.submit(job_add, copyright_lines,
                     chunk, args.backup, args.surround, args.force) for chunk in chunks))
@@ -142,37 +158,22 @@ def main():
             new_copyright_content = new_copyright_file.read()
 
         if args.file:
-            job_replace(current_copyright_content, new_copyright_content, [args.file[0]], args.backup)
+            job_replace(current_copyright_content, new_copyright_content, target_files, args.backup)
         else:
-            target_files = list_target_files(args.dir[0])
-            target_files = [item for item in target_files if os.path.splitext(item)[1] in ('.c', '.h', '.py')]
-
-            chunks = chunkify(target_files, JOBS_NUMBER)
-
             with futures.ProcessPoolExecutor(JOBS_NUMBER) as executor:
                 list(f.result() for f in futures.as_completed(executor.submit(job_replace, current_copyright_content,
                     new_copyright_content, chunk, args.backup) for chunk in chunks))
     elif args.update:
         if args.file:
-            job_update(args.update[0], [args.file[0]], args.update[1], args.update[2], args.backup)
+            job_update(args.update[0], target_files, args.update[1], args.update[2], args.backup)
         else:
-            target_files = list_target_files(args.dir[0])
-            target_files = [item for item in target_files if os.path.splitext(item)[1] in ('.c', '.h', '.py')]
-
-            chunks = chunkify(target_files, JOBS_NUMBER)
-
             with futures.ProcessPoolExecutor(JOBS_NUMBER) as executor:
                 list(f.result() for f in futures.as_completed(executor.submit(job_update, args.update[0], chunk,
                     args.update[1], args.update[2], args.backup) for chunk in chunks))
     elif args.erase:
         if args.file:
-            job_erase([args.file[0]], args.backup)
+            job_erase(target_files, args.backup)
         else:
-            target_files = list_target_files(args.dir[0])
-            target_files = [item for item in target_files if os.path.splitext(item)[1] in ('.c', '.h', '.py')]
-
-            chunks = chunkify(target_files, JOBS_NUMBER)
-
             with futures.ProcessPoolExecutor(JOBS_NUMBER) as executor:
                 list(f.result() for f in futures.as_completed(executor.submit(job_erase,  chunk,
                     args.backup) for chunk in chunks))
