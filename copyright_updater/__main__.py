@@ -114,7 +114,7 @@ def main():
         raise FileNotFoundError("File '" + args.file[0] + "' not found")
 
     if args.dir and not os.path.isdir(args.dir[0]):
-        raise FileNotFoundError("Directory '" + args.file[0] + "' not found")
+        raise FileNotFoundError("Directory '" + args.dir[0] + "' not found")
 
     if args.file:
         target_files = [args.file[0]]
