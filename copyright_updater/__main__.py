@@ -118,11 +118,11 @@ def main():
 
     if args.file:
         target_files = [args.file[0]]
-        if os.path.splitext(target_files[0])[1] not in ('.c', '.h', '.py', '.txt', '.cmake'):
+        if os.path.splitext(target_files[0])[1] not in ('.c', '.h', '.py', '.txt', '.cmake', '.java', '.sh'):
             raise NotImplementedError("Extension file not supportet")
     elif args.dir:
         target_files = list_target_files(args.dir[0])
-        target_files = [item for item in target_files if os.path.splitext(item)[1] in ('.c', '.h', '.py', '.txt', '.cmake')]
+        target_files = [item for item in target_files if os.path.splitext(item)[1] in ('.c', '.h', '.py', '.txt', '.cmake', '.java', '.sh')]
         chunks = chunkify(target_files, JOBS_NUMBER)
     else:
         target_files = []
@@ -133,7 +133,7 @@ def main():
                 target_files += list_target_files(target)
             else:
                 ConsoleLogger.warn("Target '" + target + "' not found - skipping")
-        target_files = [item for item in target_files if os.path.splitext(item)[1] in ('.c', '.h', '.py', '.txt', '.cmake')]
+        target_files = [item for item in target_files if os.path.splitext(item)[1] in ('.c', '.h', '.py', '.txt', '.cmake', '.java', '.sh')]
         chunks = chunkify(target_files, JOBS_NUMBER)
 
     if args.add:

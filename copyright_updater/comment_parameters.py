@@ -40,9 +40,9 @@ class CommentParameters(object):
 
     @staticmethod
     def create_from_file_extension(extension, surround=False):
-        if extension in ('.py', '.txt', '.cmake'):
+        if extension in ('.py', '.txt', '.cmake', '.sh'):
             return CommentParameters(CommentType.SURROUND_BY_SYMBOL_NUMBERS if surround else CommentType.SYMBOL_NUMBER, '#')
-        elif extension in ('.c', '.h'):
+        elif extension in ('.c', '.h', '.java'):
             return CommentParameters(CommentType.SURROUND_BY_STARS if surround else CommentType.SLASH, '*' if surround else '//')
         
         raise ValueError("Unsupported extension file '" + extension + "'")
